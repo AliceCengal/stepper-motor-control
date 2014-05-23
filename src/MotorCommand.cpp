@@ -70,7 +70,13 @@ Command* repeat(int count, Command* c) {
 }
 
 Command* repeatForSeconds(int seconds, Command* c) {
-  
+  double commandDuration = 0;
+  Command* curr = c;
+  while (curr != NULL) {
+    commandDuration += (curr->steps / curr->motorSpeed);
+    curr = curr->next;
+  }
+  return repeat((((double)seconds) / commandDuration) + 1, c);
 }
 
 Command* copy(Command* c) {

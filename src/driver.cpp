@@ -20,15 +20,23 @@ void countCommandChain(Command* c) {
   traverseCommands(c, &printCommand);
 }
 
+void testRepeatForSeconds() {
+  Command* c = repeatForSeconds(50, combine(slowCW(40), slowCCW(40)));
+  runVirtualMotor(1000, c);
+  dispose(c);
+}
+
+void simpleTest() {
+  Command* c = combine(fastCW(90), combine(slowCCW(90), stationary(5)));
+  runVirtualMotor(1000, c);
+  dispose(c);
+}
+
 int main() {
-  
   cout << "Motor Command Driver" << endl;
   
-  Command* c = combine(fastCW(90), combine(slowCCW(90), stationary(5)));
+  testRepeatForSeconds();
   
-  runVirtualMotor(1000, c);
-  
-  dispose(c);
   return 0;
 }
 

@@ -17,6 +17,11 @@ void showRunState() {
   std::cout << std::endl;
 }
 
+void printState() {
+  std::cout << runState->runtime << ": " 
+            << runState->position << std::endl;
+}
+
 void VM_doCommand(Command* c) {
   
   int stepsRemaining = c->steps;
@@ -30,11 +35,11 @@ void VM_doCommand(Command* c) {
     }
     
     if (runState->position < 0) {
-      runState->position = 200 - runState->position;
+      runState->position = 2000 + runState->position;
     }
     
-    if (runState->position > 200) {
-      runState->position = runState->position - 200;
+    if (runState->position > 2000) {
+      runState->position = runState->position - 2000;
     }
     
     stepsRemaining -= c->motorSpeed;
