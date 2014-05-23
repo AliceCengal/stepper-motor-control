@@ -43,6 +43,8 @@ typedef struct Command {
   
 } Command;
 
+typedef Command* CmdPtr;
+
 // BEGIN Command factories
 
 Command* fastCW(int steps);
