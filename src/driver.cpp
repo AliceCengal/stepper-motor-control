@@ -32,10 +32,16 @@ void simpleTest() {
   dispose(c);
 }
 
+void testWraparound() {
+  Command* c = repeat(30, fastCCW(50));
+  runVirtualMotor(1000, c);
+  dispose(c);
+}
+
 int main() {
   cout << "Motor Command Driver" << endl;
   
-  testRepeatForSeconds();
+  testWraparound();
   
   return 0;
 }
