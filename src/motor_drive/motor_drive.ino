@@ -1,18 +1,24 @@
 
 #include "MotorCommand.h"
+#include "VirtualMotor.h"
 
 #define CCW_PIN 11
 #define CW_PIN 12
 
 void doTest();
+void runAssay();
 
 void setup() {
   Serial.begin(9600);
   pinMode(11, OUTPUT);
   pinMode(12, OUTPUT);
   
-  Serial.println(42);
-  doTest();
+  Serial.println("Motor Command Driver");
+  Serial.print("Command size:  "); Serial.println(sizeof(Command));
+  Serial.print("Command* size: "); Serial.println(sizeof(Command*));
+  Serial.print("Int size:      "); Serial.println(sizeof(int));
+  
+  runAssay();
 }
 
 void loop() {
@@ -62,11 +68,43 @@ void combineTest() {
 }
 
 void repeatTest() {
-  CmdPtr c = repeat(5, combine(fastCW(50), slowCCW(30)));
-  printCommand(c);
+  CmdPtr c = repeat(5, combine(fastCW(300), slowCCW(150)));
+  runVirtualMotor(1000, c);
+  dispose(c);
+}
+
+void timeRepeatTest() {
+  CmdPtr c = repeatForSeconds(58, combine(fastCW(300), slowCCW(150)));
+  runVirtualMotor(1000, c);
   dispose(c);
 }
 
 void doTest() {
-  repeatTest();
+  timeRepeatTest();
 }
+
+void runAssay() {
+  CmdPtr jerkAway =
+    combine(fastSmoothCW(333 + 1000), 
+            stationary(5));
+  
+  CmdPtr windshieldWiper =
+    repeatForSeconds(360,
+      combine(fastCCW(1000),
+      combine(stationary(5),
+      combine(fastCW(1000),
+              stationary(5)))));
+  
+  CmdPtr toNext = 
+    combine(slowCW(500 + 167),
+            stationary(5));
+  
+  CmdPtr cellCycle =
+    combine(jerkAway,
+    combine(windshieldWiper,
+            toNext));
+  
+  runVirtualMotor(167, cellCycle);
+  dispose(cellCycle);
+}
+
