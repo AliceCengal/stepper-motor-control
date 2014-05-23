@@ -3,6 +3,8 @@
 *.lo
 *.o
 *.obj
+*.gch
+src/driver
 
 # Compiled Dynamic libraries
 *.so
@@ -19,3 +21,6 @@
 *.exe
 *.out
 *.app
+
+src/motor_drive/*.h
+src/motor_drive/*.cpp
