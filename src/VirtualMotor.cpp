@@ -26,7 +26,7 @@ void VM_doCommand(Command* c) {
   
   int stepsRemaining = c->steps;
   
-  while (stepsRemaining > c->motorSpeed) {
+  while (stepsRemaining > 0) {
     runState->runtime += 1;
     if (c->dir == DIR_CW) {
       runState->position += c->motorSpeed;

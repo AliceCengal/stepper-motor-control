@@ -21,7 +21,7 @@ void countCommandChain(Command* c) {
 }
 
 void testRepeatForSeconds() {
-  Command* c = repeatForSeconds(50, combine(slowCW(40), slowCCW(40)));
+  Command* c = repeatForSeconds(100, combine(fastCW(40), fastCCW(40)));
   runVirtualMotor(1000, c);
   dispose(c);
 }
@@ -41,7 +41,7 @@ void testWraparound() {
 int main() {
   cout << "Motor Command Driver" << endl;
   
-  testWraparound();
+  testRepeatForSeconds();
   
   return 0;
 }
