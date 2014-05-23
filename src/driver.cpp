@@ -40,8 +40,10 @@ void testWraparound() {
 
 int main() {
   cout << "Motor Command Driver" << endl;
-  
-  testRepeatForSeconds();
+  cout << "Command size:  " << sizeof(Command) << endl;
+  cout << "Command* size: " << sizeof(Command*) << endl;
+  cout << "Int size:      " << sizeof(int) << endl;
+  //testRepeatForSeconds();
   
   return 0;
 }
