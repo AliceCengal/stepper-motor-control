@@ -15,8 +15,8 @@ const double PI        = 3.141592653589793;
 const double STEPS_REV = 2000;
 const double DEG_STEP  = 360.0 / STEPS_REV;
 
-const int SPEED_FAST = 5;
-const int SPEED_SLOW = 1;
+const int SPEED_FAST = 20;
+const int SPEED_SLOW = 5;
 
 const int DIR_CW         = 1;
 const int DIR_CCW        = -1;
@@ -40,6 +40,7 @@ typedef struct Command {
   
   // the next Command to execute
   Command* next;
+  
 } Command;
 
 // BEGIN Command factories

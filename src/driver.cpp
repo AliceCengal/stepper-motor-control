@@ -28,7 +28,7 @@ void testRepeatForSeconds() {
 
 void simpleTest() {
   Command* c = combine(fastCW(90), combine(slowCCW(90), stationary(5)));
-  runVirtualMotor(1000, c);
+  traverseCommands(c, &printCommand);
   dispose(c);
 }
 
@@ -43,8 +43,27 @@ int main() {
   cout << "Command size:  " << sizeof(Command) << endl;
   cout << "Command* size: " << sizeof(Command*) << endl;
   cout << "Int size:      " << sizeof(int) << endl;
-  //testRepeatForSeconds();
   
+  Command* jerkAway =
+    combine(fastSmoothCW(333 + 1000), 
+            stationary(3));
+  
+  Command* windshieldWiper =
+    repeatForSeconds(360,
+      combine(fastCCW(1000),
+      combine(stationary(3),
+      combine(fastCW(1000),
+              stationary(3)))));
+  
+  Command* toNext = slowCW(500 + 167);
+  
+  Command* cellCycle =
+    combine(jerkAway,
+    combine(windshieldWiper,
+            toNext));
+  
+  runVirtualMotor(167, cellCycle);
+  dispose(cellCycle);
   return 0;
 }
 
