@@ -1,93 +1,50 @@
 
 #include "MotorCommand.h"
 
-Command* fastCW(int steps) {
+Command* createCommand(int speed, int steps, int dir, int flag) {
   Command* c = new Command();
-  c->motorSpeed = SPEED_FAST;
+  c->motorSpeed = speed;
   c->steps = steps;
-  c->dir = DIR_CW;
-  c->flag = FLAG_LINEAR;
+  c->dir = dir;
+  c->flag = flag;
   c->next = NULL;
   return c;
+}
+
+Command* fastCW(int steps) {
+  return createCommand(SPEED_FAST, steps, DIR_CW, FLAG_LINEAR);
 }
 
 Command* fastCCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_FAST;
-  c->steps = steps;
-  c->dir = DIR_CCW;
-  c->flag = FLAG_LINEAR;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_FAST, steps, DIR_CCW, FLAG_LINEAR);
 }
 
 Command* slowCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_SLOW;
-  c->steps = steps;
-  c->dir = DIR_CW;
-  c->flag = FLAG_LINEAR;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_SLOW, steps, DIR_CW, FLAG_LINEAR);
 }
 
 Command* slowCCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_SLOW;
-  c->steps = steps;
-  c->dir = DIR_CCW;
-  c->flag = FLAG_LINEAR;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_SLOW, steps, DIR_CCW, FLAG_LINEAR);
 }
 
 Command* stationary(int seconds) {
-  Command* c = new Command();
-  c->motorSpeed = 1;
-  c->steps = seconds;
-  c->flag = FLAG_LINEAR;
-  c->next = NULL;
-  return c;
+  return createCommand(1, seconds, DIR_STATIONARY, FLAG_LINEAR);
 }
 
 Command* fastSmoothCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_FAST;
-  c->steps = steps;
-  c->dir = DIR_CW;
-  c->flag = FLAG_SMOOTH;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_FAST, steps, DIR_CW, FLAG_SMOOTH);
 }
 
 Command* fastSmoothCCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_FAST;
-  c->steps = steps;
-  c->dir = DIR_CCW;
-  c->flag = FLAG_SMOOTH;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_FAST, steps, DIR_CCW, FLAG_SMOOTH);
 }
 
 Command* slowSmoothCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_SLOW;
-  c->steps = steps;
-  c->dir = DIR_CW;
-  c->flag = FLAG_SMOOTH;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_SLOW, steps, DIR_CW, FLAG_SMOOTH);
 }
 
 Command* slowSmoothCCW(int steps) {
-  Command* c = new Command();
-  c->motorSpeed = SPEED_SLOW;
-  c->steps = steps;
-  c->dir = DIR_CCW;
-  c->flag = FLAG_SMOOTH;
-  c->next = NULL;
-  return c;
+  return createCommand(SPEED_SLOW, steps, DIR_CCW, FLAG_SMOOTH);
 }
 
 Command* combine(Command* c1, Command* c2) {

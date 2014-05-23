@@ -11,15 +11,15 @@
 #ifndef MOTOR_COMMAND_H
 #define MOTOR_COMMAND_H
 
-const double PI = 3.141592653589793;
+const double PI        = 3.141592653589793;
 const double STEPS_REV = 2000;
-const double DEG_STEP = 360.0 / STEPS_REV;
+const double DEG_STEP  = 360.0 / STEPS_REV;
 
 const int SPEED_FAST = 10;
 const int SPEED_SLOW = 5;
 
-const int DIR_CW = 1;
-const int DIR_CCW = -1;
+const int DIR_CW         = 1;
+const int DIR_CCW        = -1;
 const int DIR_STATIONARY = 0;
 
 const int FLAG_LINEAR = 1;
@@ -27,7 +27,7 @@ const int FLAG_SMOOTH = 2;
 
 typedef struct Command {
   // steps per second
-  double motorSpeed;
+  int motorSpeed;
   
   // number of steps to move
   int steps;

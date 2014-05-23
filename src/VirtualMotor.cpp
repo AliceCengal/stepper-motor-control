@@ -33,6 +33,10 @@ void VM_doCommand(Command* c) {
       runState->position = 200 - runState->position;
     }
     
+    if (runState->position > 200) {
+      runState->position = runState->position - 200;
+    }
+    
     stepsRemaining -= c->motorSpeed;
     showRunState();
   }
