@@ -70,6 +70,22 @@ Command* slowSmoothCCW(int steps) {
   return createSmoothSequence(SPEED_SLOW, steps, DIR_CCW);
 }
 
+Command* linearCW(int steps, int stepsPerSecond) {
+  return createCommand(stepsPerSecond, steps, DIR_CW);
+}
+
+Command* linearCCW(int steps, int stepsPerSecond) {
+  return createCommand(stepsPerSecond, steps, DIR_CCW);
+}
+
+Command* smoothCW(int steps, int stepsPerSecond) {
+  return createSmoothSequence(stepsPerSecond, steps, DIR_CW);
+}
+
+Command* smoothCCW(int steps, int stepsPerSecond) {
+  return createSmoothSequence(stepsPerSecond, steps, DIR_CCW);
+}
+
 Command* combine(Command* c1, Command* c2) {
   Command* c = c1;
   while (c->next != NULL) {

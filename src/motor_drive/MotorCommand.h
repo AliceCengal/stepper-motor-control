@@ -90,6 +90,14 @@ Command* slowSmoothCW(int steps);
 
 Command* slowSmoothCCW(int steps);
 
+Command* linearCW(int steps, int stepsPerSecond);
+
+Command* linearCCW(int steps, int stepsPerSecond);
+
+Command* smoothCW(int steps, int stepsPerSecond);
+
+Command* smoothCCW(int steps, int stepsPerSecond);
+
 // END Command factories
 
 // BEGIN Command combinators
