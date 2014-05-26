@@ -17,12 +17,16 @@ const double DEG_STEP  = 360.0 / STEPS_REV;
 // The factor f is choosen such that for a given number
 // of sections n, 
 // 
-//   sum(f * 1/n * sin(pi * ((0.5/n):(1/n):(1-0.5/n)))) == 1.000
+//   1/f * 1/n * sum(1 ./ sin(pi * ((0.5/n):(1/n):(1-0.5/n)))) == 1.000
 //
 // This is to ensure that the smooth and linear
 // version both have the same duration for
 // a given number of steps.
-const double integralFactor = 1.5643;
+//
+// This factor corrects for two things:
+// 1. The integral of sin(pi*x) for x = 0 to 1 != 1.0
+// 2. The smooth arc is made up of discrete linear sections
+const double integralFactor = 2.428829482376077;
 
 // Some convenient conversions between degrees around the
 // cassette and motor steps, assuming 2000 motor steps per

@@ -43,11 +43,11 @@ Command* createSmoothSequence(int speed, int steps, int dir) {
   int sectionStep = steps / section;
   int remainder = steps % section;
   
-  CmdPtr c = createCommand(speed * continuousDerivativeAdjustment(0.05), 
+  CmdPtr c = createCommand(round(speed * continuousDerivativeAdjustment(0.05)), 
                            sectionStep, 
                            dir);
   for (int s = 1; s < section; ++s) {
-    combine(c, createCommand(speed * continuousDerivativeAdjustment(double(s)/section + 0.05),
+    combine(c, createCommand(round(speed * continuousDerivativeAdjustment(double(s)/section + 0.05)),
                              (s == 7) ? (sectionStep + remainder) : sectionStep,
                              dir));
   }

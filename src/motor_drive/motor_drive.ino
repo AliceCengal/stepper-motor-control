@@ -90,7 +90,7 @@ void timeRepeatTest() {
 }
 
 void smoothTest() {
-  CmdPtr c1 = combine(slowSmoothCW(DEG_180), slowSmoothCCW(DEG_180));
+  CmdPtr c1 = combine(fastSmoothCW(DEG_180), fastCCW(DEG_180));
   runVirtualMotor(0, repeat(5, c1));
   dispose(c1);
 }
