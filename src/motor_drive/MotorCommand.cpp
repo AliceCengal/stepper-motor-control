@@ -1,50 +1,73 @@
 
 #include "MotorCommand.h"
+#include <math.h>
 
-Command* createCommand(int speed, int steps, int dir, int flag) {
+const double myPI = 3.141592653589793;
+
+Command* createCommand(int speed, int steps, int dir) {
   Command* c = new Command();
   c->motorSpeed = speed;
   c->steps = steps;
   c->dir = dir;
-  c->flag = flag;
+  c->flag = 0;
   c->next = NULL;
   return c;
 }
 
+double continuousDerivativeAdjustment(double in) {
+  return integralFactor * sin(myPI * in);
+}
+
 Command* fastCW(int steps) {
-  return createCommand(SPEED_FAST, steps, DIR_CW, FLAG_LINEAR);
+  return createCommand(SPEED_FAST, steps, DIR_CW);
 }
 
 Command* fastCCW(int steps) {
-  return createCommand(SPEED_FAST, steps, DIR_CCW, FLAG_LINEAR);
+  return createCommand(SPEED_FAST, steps, DIR_CCW);
 }
 
 Command* slowCW(int steps) {
-  return createCommand(SPEED_SLOW, steps, DIR_CW, FLAG_LINEAR);
+  return createCommand(SPEED_SLOW, steps, DIR_CW);
 }
 
 Command* slowCCW(int steps) {
-  return createCommand(SPEED_SLOW, steps, DIR_CCW, FLAG_LINEAR);
+  return createCommand(SPEED_SLOW, steps, DIR_CCW);
 }
 
 Command* stationary(int seconds) {
-  return createCommand(1, seconds, DIR_STATIONARY, FLAG_LINEAR);
+  return createCommand(1, seconds, DIR_STATIONARY);
+}
+
+Command* createSmoothSequence(int speed, int steps, int dir) {
+  int section = 10;
+  int sectionStep = steps / section;
+  int remainder = steps % section;
+  
+  CmdPtr c = createCommand(speed * continuousDerivativeAdjustment(0.05), 
+                           sectionStep, 
+                           dir);
+  for (int s = 1; s < section; ++s) {
+    combine(c, createCommand(speed * continuousDerivativeAdjustment(double(s)/section + 0.05),
+                             (s == 7) ? (sectionStep + remainder) : sectionStep,
+                             dir));
+  }
+  return c;
 }
 
 Command* fastSmoothCW(int steps) {
-  return createCommand(SPEED_FAST, steps, DIR_CW, FLAG_SMOOTH);
+  return createSmoothSequence(SPEED_FAST, steps, DIR_CW);
 }
 
 Command* fastSmoothCCW(int steps) {
-  return createCommand(SPEED_FAST, steps, DIR_CCW, FLAG_SMOOTH);
+  return createSmoothSequence(SPEED_FAST, steps, DIR_CCW);
 }
 
 Command* slowSmoothCW(int steps) {
-  return createCommand(SPEED_SLOW, steps, DIR_CW, FLAG_SMOOTH);
+  return createSmoothSequence(SPEED_SLOW, steps, DIR_CW);
 }
 
 Command* slowSmoothCCW(int steps) {
-  return createCommand(SPEED_SLOW, steps, DIR_CCW, FLAG_SMOOTH);
+  return createSmoothSequence(SPEED_SLOW, steps, DIR_CCW);
 }
 
 Command* combine(Command* c1, Command* c2) {

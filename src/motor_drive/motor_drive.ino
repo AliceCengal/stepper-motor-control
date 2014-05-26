@@ -19,16 +19,10 @@ void setup() {
   Serial.print("Command* size: "); Serial.println(sizeof(Command*));
   Serial.print("Int size:      "); Serial.println(sizeof(int));
   
-  runAssay();
+  doTest();
 }
 
 void loop() {
-}
-
-// A function with continuous 1st derivative
-// in the domain (0,1), with range (0,1)
-double smoothMapping(double x) {
-  return 0.5*(1 - cos(x));
 }
 
 // delayInterval in microseconds
@@ -39,41 +33,6 @@ void doSteps(int pin, int steps, long delayInterval) {
     digitalWrite(pin, LOW);
     delayMicroseconds(delayInterval);
   }
-}
-
-// The factor f is choosen such that for a given number
-// of sections n, 
-// 
-//   sum(f * 1/n * sin(pi * ((0.5/n):(1/n):(1-0.5/n)))) == 1.000
-//
-// This is to ensure that the smooth and linear
-// version both have the same duration for
-// a given number of steps.
-const double integralFactor = 1.5643;
-
-double continuousDerivativeAdjustment(double in) {
-  return integralFactor * sin(PI * in);
-}
-
-void doSmoothSteps(int pin, int steps, long delayInterval) {
-  int section = 10;
-  if (steps <= section) {
-    doSteps(pin, steps, delayInterval);
-    return;
-  }
-  
-  int sectionSteps = steps / section;
-  int remainder = steps % section;
-  
-  for (int i = 0; i < section; ++i) {
-    if (remainder == 0) {
-      doSteps(pin, sectionSteps, delayInterval * continuousDerivativeAdjustment(double(i)/section));
-    } else {
-      doSteps(pin, sectionSteps + 1, delayInterval * continuousDerivativeAdjustment(double(i)/section));
-      remainder -= 1;
-    }
-  }
-  
 }
 
 void doCommand(CmdPtr c) {
@@ -130,24 +89,30 @@ void timeRepeatTest() {
   dispose(c);
 }
 
+void smoothTest() {
+  CmdPtr c1 = combine(slowSmoothCW(DEG_180), slowSmoothCCW(DEG_180));
+  runVirtualMotor(0, repeat(5, c1));
+  dispose(c1);
+}
+
 void doTest() {
-  timeRepeatTest();
+  smoothTest();
 }
 
 void runAssay() {
   CmdPtr jerkAway =
-    combine(fastSmoothCW(333 + 1000), 
+    combine(fastSmoothCW(DEG_60 + DEG_180), 
             stationary(5));
   
   CmdPtr windshieldWiper =
     repeatForSeconds(360,
-      combine(fastCCW(1000),
+      combine(fastCCW(DEG_180),
       combine(stationary(5),
-      combine(fastCW(1000),
+      combine(fastCW(DEG_180),
               stationary(5)))));
   
   CmdPtr toNext = 
-    combine(slowCW(500 + 167),
+    combine(slowCW(DEG_90 + DEG_30),
             stationary(5));
   
   CmdPtr cellCycle =

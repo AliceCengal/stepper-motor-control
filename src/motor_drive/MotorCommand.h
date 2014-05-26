@@ -14,14 +14,25 @@
 const double STEPS_REV = 2000;
 const double DEG_STEP  = 360.0 / STEPS_REV;
 
+// The factor f is choosen such that for a given number
+// of sections n, 
+// 
+//   sum(f * 1/n * sin(pi * ((0.5/n):(1/n):(1-0.5/n)))) == 1.000
+//
+// This is to ensure that the smooth and linear
+// version both have the same duration for
+// a given number of steps.
+const double integralFactor = 1.5643;
+
 // Some convenient conversions between degrees around the
 // cassette and motor steps, assuming 2000 motor steps per
 // revolution.
-const int DEG_90  = 500;
+const int DEG_360 = 2000;
 const int DEG_180 = 1000;
+const int DEG_90  = 500;
 const int DEG_60  = 333;
-const int DEG_30  = 167;
 const int DEG_45  = 250;
+const int DEG_30  = 167;
 
 // steps per second
 const int SPEED_FAST = 50;
