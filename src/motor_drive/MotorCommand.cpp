@@ -132,6 +132,16 @@ void traverseCommands(Command* commands, void (*executor)(Command*)) {
   }
 }
 
+int chainLength(Command* c) {
+  int count = 0;
+  for (Command* current = c; 
+       current != NULL; 
+       current = current->next) {
+    ++count;
+  }
+  return count;
+}
+
 int stepperPeriodForOmega(double omega) {
   return 1000 / (STEPS_REV * omega);
 }

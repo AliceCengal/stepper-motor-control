@@ -3,6 +3,10 @@
 // of a stepper motor. `Command` is the primitive data structure
 // which can be composed together to form complex instructions.
 //
+// Pay attention to the length of the Command chain. The Arduino only
+// has 2000 byte memory, and each Command object and its pointer
+// takes 12 bytes.
+//
 
 #ifndef NULL
 #define NULL 0
@@ -25,7 +29,7 @@ const double DEG_STEP  = 360.0 / STEPS_REV;
 //
 // This factor corrects for two things:
 // 1. The integral of sin(pi*x) for x = 0 to 1 != 1.0
-// 2. The smooth arc is made up of discrete linear sections
+// 2. The smooth arc is approximated by discrete linear sections
 const double integralFactor = 2.428829482376077;
 
 // Some convenient conversions between degrees around the
@@ -45,9 +49,6 @@ const int SPEED_SLOW = 25;
 const int DIR_CW         = 1;
 const int DIR_CCW        = -1;
 const int DIR_STATIONARY = 0;
-
-const int FLAG_LINEAR = 1;
-const int FLAG_SMOOTH = 2;
 
 typedef struct Command {
   // steps per second
@@ -106,6 +107,8 @@ Command* copy(Command* c);
 void dispose(Command* c);
 
 void traverseCommands(Command* commands, void (*executor)(Command*));
+
+int chainLength(Command* c);
 
 // return stepper square wave period for this angular velocity in rad/sec
 int stepperPeriodForOmega(double omega);

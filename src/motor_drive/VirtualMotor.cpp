@@ -14,10 +14,11 @@ RunState* RUNSTATE;
 void showRunState() {
   Serial.print(RUNSTATE->runtime);
   Serial.print(": ");
-  for (int i = 0; i < (RUNSTATE->pos / 25); ++i) {
-    Serial.print("|");
+  int offset = RUNSTATE->pos / 25 - 1;
+  for (int i = 0; i < offset; ++i) {
+    Serial.print(" ");
   }
-  Serial.println();
+  Serial.println("o");
 }
 
 void printState() {
@@ -88,7 +89,7 @@ void VM_doCommand(Command* c) {
 void runVirtualMotor(int initialPosition, Command* c) {
   
   Serial.println("Virtual Motor running");
-  
+  Serial.println("   |          '          '          '          |          '          '          '          |");
   RUNSTATE = new RunState();
   RUNSTATE->pos = initialPosition;
   RUNSTATE->runtime = 0;
