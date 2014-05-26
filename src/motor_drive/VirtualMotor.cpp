@@ -4,7 +4,6 @@
 typedef struct {
   int runtime;
   int pos;
-  
   double partialTime;
   int partialSteps;
 } RunState;
