@@ -7,6 +7,12 @@
 // has 2000 byte memory, and each Command object and its pointer
 // takes 12 bytes.
 //
+// Consider the exact structure of the Command chain an implementation
+// detail. Try not to access or modify the `next` pointer directly.
+// Use the combinator functions instead. After passing a Command
+// chain to the traverse function, assume that the structs are
+// spent. Dispose of them, and build a new one.
+//
 
 #ifndef NULL
 #define NULL 0
@@ -43,8 +49,8 @@ const int DEG_45  = 250;
 const int DEG_30  = 167;
 
 // steps per second
-const int SPEED_FAST = 50;
-const int SPEED_SLOW = 25;
+const int SPEED_FAST = 1000;
+const int SPEED_SLOW = 50;
 
 const int DIR_CW         = 1;
 const int DIR_CCW        = -1;

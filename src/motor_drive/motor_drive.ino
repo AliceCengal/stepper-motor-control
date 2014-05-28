@@ -1,28 +1,34 @@
 
 #include <math.h>
 #include "MotorCommand.h"
-#include "VirtualMotor.h"
+#include "CellStruct.h"
 
 #define CCW_PIN 11
 #define CW_PIN 12
+#define ASSAY_PIN 7
+#define CRAWL_PIN 6
 
-void doTest();
-void runAssay();
+bool assaySwitch = false;
+bool crawlSwitch = false;
+CmdPtr crawlCmd = slowCCW(2);
 
 void setup() {
   Serial.begin(9600);
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
-  
-  Serial.println("Motor Command Driver");
-  Serial.print("Command size:  "); Serial.println(sizeof(Command));
-  Serial.print("Command* size: "); Serial.println(sizeof(Command*));
-  Serial.print("Int size:      "); Serial.println(sizeof(int));
-  
-  doTest();
+  pinMode(CCW_PIN, OUTPUT);
+  pinMode(CW_PIN, OUTPUT);
+  pinMode(ASSAY_PIN, INPUT);
+  pinMode(CRAWL_PIN, INPUT);
 }
 
 void loop() {
+  assaySwitch = digitalRead(ASSAY_PIN) == HIGH;
+  crawlSwitch = digitalRead(CRAWL_PIN) == HIGH;
+  
+  if (assaySwitch) {
+    runAssay();
+  } else if (crawlSwitch) {
+    runMotor(crawlCmd);
+  }
 }
 
 // delayInterval in microseconds
@@ -49,6 +55,10 @@ void doCommand(CmdPtr c) {
   }
 }
 
+void runMotor(CmdPtr c) {
+  traverseCommands(c, &doCommand);
+}
+
 void printSingleCommand(CmdPtr c) {
   Serial.print("Command(");
   Serial.print(c->motorSpeed);
@@ -66,32 +76,32 @@ void printCommand(CmdPtr c) {
 }
 
 void simpleTest() {
-  CmdPtr c = fastCW(50);
-  printCommand(c);
+  CmdPtr c = fastCW(DEG_180);
+  runMotor(c);
   dispose(c);  
 }
 
 void combineTest() {
-  CmdPtr c = combine(fastCW(50), combine(slowCCW(40), stationary(5)));
-  printCommand(c);
+  CmdPtr c = combine(fastCW(DEG_180), combine(stationary(5), slowCCW(DEG_90)));
+  runMotor(c);
   dispose(c);  
 }
 
 void repeatTest() {
-  CmdPtr c = repeat(5, combine(fastCW(300), slowCCW(150)));
-  runVirtualMotor(1000, c);
+  CmdPtr c = repeat(5, combine(fastCW(DEG_90), slowCCW(DEG_45)));
+  runMotor(c);
   dispose(c);
 }
 
 void timeRepeatTest() {
-  CmdPtr c = repeatForSeconds(58, combine(fastCW(300), slowCCW(150)));
-  runVirtualMotor(1000, c);
+  CmdPtr c = repeatForSeconds(58, combine(fastCW(DEG_90), slowCCW(DEG_45)));
+  runMotor(c);
   dispose(c);
 }
 
 void smoothTest() {
-  CmdPtr c1 = combine(fastSmoothCW(DEG_180), fastCCW(DEG_180));
-  runVirtualMotor(0, repeat(5, c1));
+  CmdPtr c1 = combine(fastSmoothCW(DEG_180), stationary(3));
+  runMotor(repeat(5, c1));
   dispose(c1);
 }
 
@@ -99,20 +109,21 @@ void doTest() {
   smoothTest();
 }
 
-void runAssay() {
+// create a cell cycle command. wiperDuration in seconds
+CmdPtr makeCellCycle(int wiperDuration) {
   CmdPtr jerkAway =
-    combine(fastSmoothCW(DEG_60 + DEG_180), 
+    combine(fastSmoothCCW(DEG_30 + DEG_180), 
             stationary(5));
   
   CmdPtr windshieldWiper =
-    repeatForSeconds(360,
-      combine(fastCCW(DEG_180),
-      combine(stationary(5),
+    repeatForSeconds(wiperDuration,
       combine(fastCW(DEG_180),
+      combine(stationary(5),
+      combine(fastCCW(DEG_180),
               stationary(5)))));
   
   CmdPtr toNext = 
-    combine(slowCW(DEG_90 + DEG_30),
+    combine(slowCCW(DEG_90 + DEG_60),
             stationary(5));
   
   CmdPtr cellCycle =
@@ -120,7 +131,27 @@ void runAssay() {
     combine(windshieldWiper,
             toNext));
   
-  runVirtualMotor(167, cellCycle);
-  dispose(cellCycle);
+  return cellCycle;
+}
+
+CmdPtr makeTransition(int offset) {
+  return combine(slowCCW(offset), stationary(5));
+}
+
+void runAssay() {
+  int assayLength = 4;
+  Cell assay[] = {
+    makeCell(  0, 100, 18),
+    makeCell(140,  84, 18),
+    makeCell(292,  92, 18),
+    makeCell(440,  92, 60)
+  };
+  
+  for (int i = 0; i < assayLength; ++i) {
+    CmdPtr cycle = makeCellCycle(assay[i].duration);
+    runMotor(combine(cycle, makeTransition(assay[i].length)));
+    dispose(cycle);
+  }
+  
 }
 
